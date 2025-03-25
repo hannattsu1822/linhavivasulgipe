@@ -3,23 +3,19 @@ const path = require('path');
 const multer = require('multer');
 const xlsx = require('xlsx');
 const session = require('express-session');
-const mysql = require('mysql2'); // Substituindo o PostgreSQL por MySQL
+const mysql = require('mysql2');
 const { chromium } = require('playwright');
 const cors = require('cors');
+require('dotenv').config(); // Carrega as variáveis de ambiente
+
 const app = express();
-const PORT = process.env.PORT || 3000; // Usa a porta do Railway ou 3000 localmente
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
-require('dotenv').config();
 
-// Middleware para processar JSON
+// Configuração dinâmica da porta para Railway
+const port = process.env.PORT || 3000;
+
+// Middlewares
 app.use(express.json());
-
-// Middleware CORS
 app.use(cors());
-
-// Servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Configuração do multer para upload de arquivos
@@ -27,33 +23,59 @@ const upload = multer({ dest: 'uploads/' });
 
 // Configuração de sessões
 app.use(session({
-  secret: 'sua_chave_secreta',
+  secret: process.env.SESSION_SECRET || 'sua_chave_secreta_segura', // Melhor usar variável de ambiente
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', // Habilita secure cookie em produção
+    maxAge: 24 * 60 * 60 * 1000 // 24 horas
+  }
 }));
 
-// Extrai os dados da URL de conexão
-const dbUrl = new URL(process.env.MYSQL_URL);
-const sslRequired = process.env.MYSQL_SSL === 'true';
+// Configuração robusta da conexão com MySQL
+let pool;
+try {
+  if (!process.env.MYSQL_URL) {
+    throw new Error('Variável MYSQL_URL não encontrada no .env');
+  }
 
-// Configuração do pool de conexões MySQL para Railway
-const pool = mysql.createPool({
-  host: 'shortline.proxy.rlwy.net',
-  user: 'root',
-  password: 'aUhxdnXKYXFdAqepSKQpYcMgUntBvfTa',
-  database: 'railway',
-  port: 31056,
-  ssl: process.env.MYSQL_SSL === 'true' ? { 
-    rejectUnauthorized: false 
-  } : null,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+  // Extrai os componentes da URL de conexão
+  const dbUrl = process.env.MYSQL_URL;
+  const [_, user, password, host, portDb, database] = dbUrl.match(/mysql:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/) || [];
+  
+  pool = mysql.createPool({
+    host: host || 'shortline.proxy.rlwy.net',
+    user: user || 'root',
+    password: password || 'aUhxdnXKYXFdAqepSKQpYcMgUntBvfTa',
+    database: database || 'railway',
+    port: portDb || 31056,
+    ssl: process.env.MYSQL_SSL === 'true' ? { 
+      rejectUnauthorized: false 
+    } : null,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    connectTimeout: 10000 // 10 segundos de timeout
+  });
 
-// Promisify para usar async/await com MySQL
+  // Testa a conexão imediatamente
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('❌ Erro ao conectar ao banco de dados:', err);
+      process.exit(1);
+    }
+    console.log('✅ Conexão com o banco de dados estabelecida com sucesso!');
+    connection.release();
+  });
+
+} catch (error) {
+  console.error('❌ Erro na configuração do banco de dados:', error.message);
+  process.exit(1);
+}
+
 const promisePool = pool.promise();
+
+// ... (continue com o restante do seu código atual)
 
 // Função para converter Excel Serial Date para data legível
 function excelSerialDateToJSDate(serial) {
