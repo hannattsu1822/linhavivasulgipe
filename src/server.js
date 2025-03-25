@@ -7,7 +7,10 @@ const mysql = require('mysql2'); // Substituindo o PostgreSQL por MySQL
 const { chromium } = require('playwright');
 const cors = require('cors');
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000; // Usa a porta do Railway ou 3000 localmente
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
 require('dotenv').config();
 
 // Middleware para processar JSON
