@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auditoria</title>
+  <!-- Link para o arquivo CSS externo (auditoria.css) -->
+  <link rel="stylesheet" href="static/css/auditoria.css">
+</head>
+<body>
+  <h1>Logs de Auditoria</h1>
+  <table id="auditoriaTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Matrícula</th>
+        <th>Ação</th>
+        <th>Detalhes</th>
+        <th>Data/Hora</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Os logs serão inseridos aqui via JavaScript -->
+    </tbody>
+  </table>
+
+  <script>
+    // Verifica se o usuário tem permissão para acessar a auditoria
+    const user = JSON.parse(localStorage.getItem('user'));
+    const cargosPermitidos = ['Técnico', 'Engenheiro', 'ADMIN']; // Cargos que podem acessar a auditoria
+
+    if (!user || !cargosPermitidos.includes(user.cargo)) {
+      // Se o acesso for negado, redireciona para o dashboard
+      alert('Acesso negado. Cargo não permitido.');
+      window.location.href = '/dashboard';
+    }
+
+    // Função para carregar os logs de auditoria
+    async function carregarAuditoria() {
+      try {
+        const response = await fetch('/api/auditoria');
+        if (!response.ok) {
+          throw new Error('Erro ao carregar auditoria');
+        }
+        const logs = await response.json();
+
+        const tbody = document.querySelector('#auditoriaTable tbody');
+        tbody.innerHTML = ''; // Limpa o conteúdo atual
+
+        logs.forEach(log => {
+          const row = `
+            <tr>
+              <td>${log.id}</td>
+              <td>${log.matricula_usuario}</td>
+              <td>${log.acao}</td>
+              <td>${log.detalhes || ''}</td>
+              <td>${new Date(log.timestamp).toLocaleString()}</td>
+            </tr>
+          `;
+          tbody.innerHTML += row;
+        });
+      } catch (err) {
+        console.error('Erro ao carregar auditoria:', err);
+        alert('Erro ao carregar auditoria. Verifique o console para mais detalhes.');
+      }
+    }
+
+    // Carrega os logs ao abrir a página
+    carregarAuditoria();
+  </script>
+</body>
+</html>

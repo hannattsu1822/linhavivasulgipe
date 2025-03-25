@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Veículos</title>
+  <link rel="stylesheet" href="/static/css/filtrar_veiculos.css">
+  <link rel="stylesheet" href="/static/css/relatorio_veiculos.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="relatorio-container">
+    <h1><i class="fas fa-file-alt icon"></i>Relatório de Inspeção - ID: <span id="inspecaoId"></span></h1>
+
+    <div id="relatorioContent">
+      <!-- As informações da inspeção serão preenchidas aqui dinamicamente -->
+    </div>
+
+    <button onclick="gerarPDF()" class="pdf-btn">
+      <i class="fas fa-file-pdf icon"></i>Gerar PDF
+    </button>
+
+    <button onclick="window.location.href = '/filtrar_veiculos'" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Filtrar Veículos
+    </button>
+  </div>
+
+  <script>
+    // Mapeamento dos nomes técnicos para nomes formatados
+    const mapeamentoNomes = {
+      buzina: "Buzina",
+      cinto_seguranca: "Cinto de Segurança",
+      quebra_sol: "Quebra-sol",
+      retrovisor_inteiro: "Retrovisor Inteiro",
+      retrovisor_direito_esquerdo: "Retrovisor Direito/Esquerdo",
+      limpador_para_brisa: "Limpador de Para-brisa",
+      farol_baixa: "Farol de Baixa",
+      farol_alto: "Farol de Alta",
+      meia_luz: "Meia-luz",
+      luz_freio: "Luz de Freio",
+      luz_re: "Luz de Ré",
+      bateria: "Bateria",
+      luzes_painel: "Luzes do Painel",
+      seta_direita_esquerdo: "Seta Direita/Esquerda",
+      pisca_alerta: "Pisca-alerta",
+      luz_interna: "Luz Interna",
+      velocimetro_tacografo: "Velocímetro/Tacógrafo",
+      freios: "Freios",
+      macaco: "Macaco",
+      chave_roda: "Chave de Roda",
+      triangulo_sinalizacao: "Triângulo de Sinalização",
+      extintor_incendio: "Extintor de Incêndio",
+      portas_travas: "Portas e Travas",
+      sirene: "Sirene",
+      fechamento_janelas: "Fechamento de Janelas",
+      para_brisa: "Para-brisa",
+      oleo_motor: "Óleo do Motor",
+      oleo_freio: "Óleo de Freio",
+      nivel_agua_radiador: "Nível de Água do Radiador",
+      pneus_estado_calibragem: "Pneus (Estado e Calibragem)",
+      pneu_reserva_estepe: "Pneu Reserva/Estepe",
+      bancos_encosto_assentos: "Bancos e Encostos",
+      para_choque_dianteiro: "Para-choque Dianteiro",
+      para_choque_traseiro: "Para-choque Traseiro",
+      lataria: "Lataria",
+      estado_fisico_sky: "Estado Físico do Sky",
+      funcionamento_sky: "Funcionamento do Sky",
+      sapatas: "Sapatas",
+      cestos: "Cestos",
+      comandos: "Comandos",
+      lubrificacao: "Lubrificação",
+      ensaio_eletrico: "Ensaio Elétrico",
+      cilindros: "Cilindros",
+      gavetas: "Gavetas",
+      capas: "Capas",
+      nivel_oleo_sky: "Nível de Óleo do Sky",
+    };
+
+    // Função para obter o ícone correto com base no status (0, 1 ou null)
+    function getIcon(status) {
+      if (status === 1) {
+        return '<i class="fas fa-check-circle icon-ok"></i>';
+      } else if (status === 0) {
+        return '<i class="fas fa-times-circle icon-not-ok"></i>';
+      } else {
+        return '<i class="fas fa-question-circle icon-unknown"></i>';
+      }
+    }
+
+    // Função para obter o texto do status (0, 1 ou null)
+    function getStatusText(status) {
+      if (status === 1) {
+        return 'Conforme';
+      } else if (status === 0) {
+        return 'Não Conforme';
+      } else {
+        return 'Não Informado';
+      }
+    }
+
+    // Função para carregar os dados da inspeção
+    async function carregarRelatorio() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const inspecaoId = urlParams.get('id');
+
+      if (!inspecaoId) {
+        alert('ID da inspeção não encontrado!');
+        return;
+      }
+
+      document.getElementById('inspecaoId').textContent = inspecaoId;
+
+      try {
+        const response = await fetch(`/api/inspecoes_publico/${inspecaoId}`);
+        if (!response.ok) {
+          throw new Error('Erro ao carregar dados da inspeção');
+        }
+        const data = await response.json();
+
+        const relatorioContent = document.getElementById('relatorioContent');
+
+        // Campos que não devem ser exibidos como itens do checklist
+        const camposExcluidos = ['id', 'matricula', 'placa', 'data_inspecao', 'km_atual', 'horimetro', 'observacoes'];
+
+        // Renderiza as informações gerais
+        relatorioContent.innerHTML = `
+          <h2>Informações Gerais</h2>
+          <div class="relatorio-grid">
+            <div class="relatorio-item">
+              <i class="fas fa-car"></i>
+              <p><strong>Placa:</strong> ${data.placa}</p>
+            </div>
+            <div class="relatorio-item">
+              <i class="fas fa-id-card"></i>
+              <p><strong>Matrícula:</strong> ${data.matricula}</p>
+            </div>
+            <div class="relatorio-item">
+              <i class="fas fa-calendar-alt"></i>
+              <p><strong>Data da Inspeção:</strong> ${new Date(data.data_inspecao).toLocaleDateString()}</p>
+            </div>
+            <div class="relatorio-item">
+              <i class="fas fa-tachometer-alt"></i>
+              <p><strong>KM Atual:</strong> ${data.km_atual}</p>
+            </div>
+            <div class="relatorio-item">
+              <i class="fas fa-clock"></i>
+              <p><strong>Horímetro:</strong> ${data.horimetro}</p>
+            </div>
+          </div>
+
+          <h2>Itens de Inspeção</h2>
+          <div class="relatorio-grid">
+            ${Object.keys(data)
+              .filter(key => !camposExcluidos.includes(key))
+              .map(key => `
+                <div class="relatorio-item">
+                  ${getIcon(data[key])}
+                  <p><strong>${mapeamentoNomes[key] || key}:</strong> ${getStatusText(data[key])}</p>
+                </div>
+              `)
+              .join('')}
+          </div>
+
+          ${data.observacoes ? `
+            <h2>Observações</h2>
+            <div class="relatorio-item">
+              <p>${data.observacoes}</p>
+            </div>
+          ` : ''}
+        `;
+      } catch (error) {
+        console.error('Erro ao carregar relatório:', error);
+        alert('Erro ao carregar relatório. Verifique o console para mais detalhes.');
+      }
+    }
+
+    // Função para gerar PDF
+    function gerarPDF() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const inspecaoId = urlParams.get('id');
+
+      if (!inspecaoId) {
+        alert('ID da inspeção não encontrado!');
+        return;
+      }
+
+      window.location.href = `/api/gerar_pdf_veiculos/${inspecaoId}`;
+    }
+
+    // Carrega o relatório ao carregar a página
+    window.onload = carregarRelatorio;
+  </script>
+</body>
+</html>

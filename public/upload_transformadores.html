@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload de Transformadores</title>
+  <link rel="stylesheet" href="/static/css/upload_transformadores.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="upload-container">
+    <div class="header">
+      <h1><i class="fas fa-upload icon"></i>Upload de Planilha de Transformadores</h1>
+      <p>Faça o upload de uma planilha no formato Excel ou CSV para processar os dados.</p>
+    </div>
+
+    <!-- Formulário de upload -->
+    <form id="uploadForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="planilha">Selecione a planilha:</label>
+        <div class="file-input">
+          <input type="file" id="planilha" name="planilha" accept=".xlsx, .xls, .csv" required>
+          <span class="file-custom"></span>
+        </div>
+      </div>
+
+      <!-- Botão de upload -->
+      <button type="submit" id="uploadButton">
+        <i class="fas fa-upload icon"></i>Enviar Planilha
+      </button>
+    </form>
+
+    <!-- Mensagem de feedback -->
+    <div id="mensagem"></div>
+
+    <!-- Botão de voltar -->
+    <button onclick="window.location.href = '/transformadores'" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Transformadores
+    </button>
+  </div>
+
+  <script>
+    // Função para enviar o formulário de upload
+    document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+      const fileInput = document.getElementById('planilha');
+      formData.append('planilha', fileInput.files[0]);
+
+      const uploadButton = document.getElementById('uploadButton');
+      uploadButton.disabled = true;
+      uploadButton.innerHTML = '<i class="fas fa-spinner fa-spin icon"></i>Enviando...';
+
+      try {
+        const response = await fetch('/api/upload_transformadores', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          document.getElementById('mensagem').textContent = result.message || 'Planilha enviada com sucesso!';
+          document.getElementById('mensagem').className = 'sucesso';
+        } else {
+          document.getElementById('mensagem').textContent = result.message || 'Erro ao enviar planilha!';
+          document.getElementById('mensagem').className = 'erro';
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        document.getElementById('mensagem').textContent = 'Erro ao enviar planilha!';
+        document.getElementById('mensagem').className = 'erro';
+      } finally {
+        uploadButton.disabled = false;
+        uploadButton.innerHTML = '<i class="fas fa-upload icon"></i>Enviar Planilha';
+      }
+    });
+
+    // Atualiza o texto do input de arquivo
+    document.getElementById('planilha').addEventListener('change', function () {
+      const fileName = this.files[0] ? this.files[0].name : 'Nenhum arquivo selecionado';
+      document.querySelector('.file-custom').textContent = fileName;
+    });
+  </script>
+</body>
+</html>

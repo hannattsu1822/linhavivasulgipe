@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Inspeção</title>
+  <link rel="stylesheet" href="/static/css/checklist.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="checklist-container">
+    <h1>Editar Inspeção</h1>
+    <form id="editarForm" class="checklist-form">
+      <!-- Menu suspenso para matrícula -->
+      <div class="form-group">
+        <label for="matricula">Matrícula:</label>
+        <select id="matricula" name="matricula" required>
+          <option value="">Selecione uma matrícula</option>
+        </select>
+      </div>
+
+      <!-- Menu suspenso para placa -->
+      <div class="form-group">
+        <label for="placa">Placa do Veículo:</label>
+        <select id="placa" name="placa" required>
+          <option value="">Selecione uma placa</option>
+        </select>
+      </div>
+
+      <!-- Campos obrigatórios -->
+      <div class="form-group">
+        <label for="data_inspecao">Data da Inspeção:</label>
+        <input type="date" id="data_inspecao" name="data_inspecao" required>
+      </div>
+      <div class="form-group">
+        <label for="km_atual">KM Atual:</label>
+        <input type="number" id="km_atual" name="km_atual" required>
+      </div>
+      <div class="form-group">
+        <label for="horimetro">Horímetro:</label>
+        <input type="number" id="horimetro" name="horimetro" required>
+      </div>
+
+      <!-- Itens do checklist -->
+      <div id="checklist-items" class="checklist-items">
+        <!-- Itens serão carregados dinamicamente aqui -->
+      </div>
+
+      <!-- Caixa de texto para observações -->
+      <div class="form-group">
+        <label for="observacoes">Observações:</label>
+        <textarea id="observacoes" name="observacoes" rows="4"></textarea>
+      </div>
+
+      <!-- Botão de salvar -->
+      <button type="submit" id="salvarButton">Salvar Alterações</button>
+    </form>
+
+    <!-- Botão de voltar -->
+    <button onclick="window.location.href = '/filtrar_veiculos'" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Filtrar Veículos
+    </button>
+
+    <!-- Área para exibir mensagens -->
+    <div id="mensagem"></div>
+  </div>
+
+  <script>
+    // Mapeamento dos nomes técnicos para nomes formatados
+    const mapeamentoNomes = {
+      buzina: "Buzina",
+      cinto_seguranca: "Cinto de Segurança",
+      quebra_sol: "Quebra-sol",
+      retrovisor_inteiro: "Retrovisor Inteiro",
+      retrovisor_direito_esquerdo: "Retrovisor Direito/Esquerdo",
+      limpador_para_brisa: "Limpador de Para-brisa",
+      farol_baixa: "Farol de Baixa",
+      farol_alto: "Farol de Alta",
+      meia_luz: "Meia-luz",
+      luz_freio: "Luz de Freio",
+      luz_re: "Luz de Ré",
+      bateria: "Bateria",
+      luzes_painel: "Luzes do Painel",
+      seta_direita_esquerdo: "Seta Direita/Esquerda",
+      pisca_alerta: "Pisca-alerta",
+      luz_interna: "Luz Interna",
+      velocimetro_tacografo: "Velocímetro/Tacógrafo",
+      freios: "Freios",
+      macaco: "Macaco",
+      chave_roda: "Chave de Roda",
+      triangulo_sinalizacao: "Triângulo de Sinalização",
+      extintor_incendio: "Extintor de Incêndio",
+      portas_travas: "Portas e Travas",
+      sirene: "Sirene",
+      fechamento_janelas: "Fechamento de Janelas",
+      para_brisa: "Para-brisa",
+      oleo_motor: "Óleo do Motor",
+      oleo_freio: "Óleo de Freio",
+      nivel_agua_radiador: "Nível de Água do Radiador",
+      pneus_estado_calibragem: "Pneus (Estado e Calibragem)",
+      pneu_reserva_estepe: "Pneu Reserva/Estepe",
+      bancos_encosto_assentos: "Bancos e Encostos",
+      para_choque_dianteiro: "Para-choque Dianteiro",
+      para_choque_traseiro: "Para-choque Traseiro",
+      lataria: "Lataria",
+      estado_fisico_sky: "Estado Físico do Sky",
+      funcionamento_sky: "Funcionamento do Sky",
+      sapatas: "Sapatas",
+      cestos: "Cestos",
+      comandos: "Comandos",
+      lubrificacao: "Lubrificação",
+      ensaio_eletrico: "Ensaio Elétrico",
+      cilindros: "Cilindros",
+      gavetas: "Gavetas",
+      capas: "Capas",
+      nivel_oleo_sky: "Nível de Óleo do Sky",
+    };
+
+    // Função para carregar os motoristas
+    async function carregarMotoristas() {
+      try {
+        const response = await fetch('/api/motoristas');
+        const data = await response.json();
+
+        const matriculaSelect = document.getElementById('matricula');
+
+        // Limpa o menu suspenso
+        matriculaSelect.innerHTML = '<option value="">Selecione uma matrícula</option>';
+
+        // Adiciona as opções
+        data.forEach((motorista) => {
+          const option = document.createElement('option');
+          option.value = motorista.matricula;
+          option.textContent = `${motorista.matricula} - ${motorista.nome}`;
+          matriculaSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar motoristas:', error);
+      }
+    }
+
+    // Função para carregar as placas
+    async function carregarPlacas() {
+      try {
+        const response = await fetch('/api/placas');
+        const data = await response.json();
+
+        const placaSelect = document.getElementById('placa');
+
+        // Limpa o menu suspenso
+        placaSelect.innerHTML = '<option value="">Selecione uma placa</option>';
+
+        // Adiciona as opções
+        data.forEach((veiculo) => {
+          const option = document.createElement('option');
+          option.value = veiculo.placa;
+          option.textContent = veiculo.placa;
+          placaSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar placas:', error);
+      }
+    }
+
+    // Função para carregar os dados da inspeção
+    async function carregarInspecao() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+
+      if (!id) {
+        alert('ID da inspeção não encontrado!');
+        window.location.href = '/filtrar_veiculos';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/editar_inspecao/${id}`);
+        const inspecao = await response.json();
+
+        // Preenche os campos do formulário
+        document.getElementById('matricula').value = inspecao.matricula;
+        document.getElementById('placa').value = inspecao.placa;
+        document.getElementById('data_inspecao').value = inspecao.data_inspecao;
+        document.getElementById('km_atual').value = inspecao.km_atual;
+        document.getElementById('horimetro').value = inspecao.horimetro;
+        document.getElementById('observacoes').value = inspecao.observacoes || '';
+
+        // Preenche os checkboxes
+        const checklistItemsContainer = document.getElementById('checklist-items');
+        checklistItemsContainer.innerHTML = '';
+
+        for (const key in inspecao) {
+          if (mapeamentoNomes[key]) {
+            const checklistItem = document.createElement('div');
+            checklistItem.className = 'checklist-item';
+
+            // Nome do item (formatado)
+            const itemNome = document.createElement('span');
+            itemNome.textContent = mapeamentoNomes[key];
+            checklistItem.appendChild(itemNome);
+
+            // Checkbox "Conforme" e "Não Conforme"
+            const checkboxes = document.createElement('div');
+            checkboxes.className = 'checkboxes';
+
+            const conformeLabel = document.createElement('label');
+            conformeLabel.innerHTML = `
+              <input type="checkbox" name="${key}" value="true" onchange="marcarApenasUm(this)"
+                ${inspecao[key] === true ? 'checked' : ''}>
+              Conforme
+            `;
+            checkboxes.appendChild(conformeLabel);
+
+            const naoConformeLabel = document.createElement('label');
+            naoConformeLabel.innerHTML = `
+              <input type="checkbox" name="${key}" value="false" onchange="marcarApenasUm(this)"
+                ${inspecao[key] === false ? 'checked' : ''}>
+              Não Conforme
+            `;
+            checkboxes.appendChild(naoConformeLabel);
+
+            checklistItem.appendChild(checkboxes);
+            checklistItemsContainer.appendChild(checklistItem);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao carregar inspeção:', error);
+        alert('Erro ao carregar inspeção!');
+        window.location.href = '/filtrar_veiculos';
+      }
+    }
+
+    // Função para marcar apenas um checkbox por item
+    function marcarApenasUm(checkbox) {
+      const checkboxes = checkbox.closest('.checkboxes').querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((cb) => {
+        if (cb !== checkbox) {
+          cb.checked = false;
+        }
+      });
+    }
+
+    // Função para validar o formulário
+    function validarFormulario(data) {
+      if (!data.matricula) {
+        exibirMensagem('Selecione uma matrícula!', 'erro');
+        return false;
+      }
+      if (!data.placa) {
+        exibirMensagem('Selecione uma placa!', 'erro');
+        return false;
+      }
+      if (!data.data_inspecao) {
+        exibirMensagem('Informe a data da inspeção!', 'erro');
+        return false;
+      }
+      if (!data.km_atual || data.km_atual < 0) {
+        exibirMensagem('Informe um valor válido para KM atual!', 'erro');
+        return false;
+      }
+      if (!data.horimetro || data.horimetro < 0) {
+        exibirMensagem('Informe um valor válido para horímetro!', 'erro');
+        return false;
+      }
+      return true;
+    }
+
+    // Função para exibir mensagens
+    function exibirMensagem(mensagem, tipo = 'sucesso') {
+      const mensagemDiv = document.getElementById('mensagem');
+      mensagemDiv.textContent = mensagem;
+      mensagemDiv.className = tipo; // Adiciona a classe para estilização
+    }
+
+    // Função para enviar os dados do formulário
+    async function salvarAlteracoes(event) {
+      event.preventDefault();
+
+      // Desabilita o botão para evitar múltiplos cliques
+      const salvarButton = document.getElementById('salvarButton');
+      salvarButton.disabled = true;
+      salvarButton.textContent = 'Salvando...';
+
+      const formData = new FormData(document.getElementById('editarForm'));
+      const data = Object.fromEntries(formData.entries());
+
+      // Converte os checkboxes para booleanos
+      for (const key in data) {
+        if (data[key] === 'true') {
+          data[key] = true;
+        } else if (data[key] === 'false') {
+          data[key] = false;
+        }
+      }
+
+      // Valida o formulário
+      if (!validarFormulario(data)) {
+        salvarButton.disabled = false; // Reabilita o botão se a validação falhar
+        salvarButton.textContent = 'Salvar Alterações';
+        return;
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+
+      try {
+        const response = await fetch(`/api/editar_inspecao/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          exibirMensagem(result.message || 'Alterações salvas com sucesso!', 'sucesso');
+
+          // Redireciona para a página filtrar_veiculos.html após 1,5 segundos
+          setTimeout(() => {
+            window.location.href = '/filtrar_veiculos';
+          }, 1500); // 1500ms = 1,5 segundos
+        } else {
+          exibirMensagem(result.message || 'Erro ao salvar alterações!', 'erro');
+          salvarButton.disabled = false; // Reabilita o botão em caso de erro
+          salvarButton.textContent = 'Salvar Alterações';
+        }
+      } catch (error) {
+        console.error('Erro ao enviar dados:', error);
+        exibirMensagem('Erro ao salvar alterações!', 'erro');
+        salvarButton.disabled = false; // Reabilita o botão em caso de erro
+        salvarButton.textContent = 'Salvar Alterações';
+      }
+    }
+
+    // Carrega os motoristas, placas e dados da inspeção ao carregar a página
+    window.onload = () => {
+      carregarMotoristas();
+      carregarPlacas();
+      carregarInspecao();
+    };
+
+    // Adiciona o evento de submit ao formulário
+    document.getElementById('editarForm').addEventListener('submit', salvarAlteracoes);
+  </script>
+</body>
+</html>

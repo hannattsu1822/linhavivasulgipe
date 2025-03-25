@@ -1,0 +1,148 @@
+/* Estilos específicos para a página de relatório de veículos */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    overflow: auto;
+  }
+  
+  .relatorio-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .relatorio-container h1 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2575fc;
+  }
+  
+  .relatorio-container h1 i {
+    margin-right: 10px;
+  }
+  
+  .relatorio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .relatorio-item {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .relatorio-item i {
+    font-size: 1.5rem;
+  }
+  
+  .relatorio-item .icon-ok {
+    color: #28a745;
+  }
+  
+  .relatorio-item .icon-not-ok {
+    color: #dc3545;
+  }
+  
+  .relatorio-item .icon-unknown {
+    color: #ffc107;
+  }
+  
+  .relatorio-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .relatorio-item strong {
+    font-weight: 600;
+  }
+  
+  /* Botão de voltar */
+  .back-btn {
+    width: 100%;
+    padding: 10px;
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .back-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Botão de gerar PDF */
+  .pdf-btn {
+    width: 100%;
+    padding: 10px;
+    background: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .pdf-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .pdf-btn i {
+    margin-right: 10px;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .relatorio-container {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  
+    .relatorio-container h1 {
+      font-size: 1.5rem;
+    }
+  
+    .relatorio-item p {
+      font-size: 12px;
+    }
+  }

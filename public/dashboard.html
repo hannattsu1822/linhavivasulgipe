@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="static/css/styles.css">
+  <link rel="stylesheet" href="static/css/dashboard.css">
+  <link rel="stylesheet" href="static/css/toast.css"> <!-- Adicionar o arquivo toast.css -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <h1><i class="fas fa-tachometer-alt icon"></i>Dashboard</h1>
+
+    <!-- Informações do usuário -->
+    <div class="user-info slide-in">
+      <p><i class="fas fa-user icon"></i><strong>Nome:</strong> <span id="user-name"></span></p>
+      <p><i class="fas fa-id-card icon"></i><strong>Matrícula:</strong> <span id="user-matricula"></span></p>
+      <p><i class="fas fa-briefcase icon"></i><strong>Cargo:</strong> <span id="user-cargo"></span></p>
+    </div>
+
+    <!-- Cards de redirecionamento -->
+    <div class="card slide-in" onclick="navigateTo('transformadores')">
+      <h2><i class="fas fa-bolt icon"></i>Transformadores</h2>
+    </div>
+
+    <div class="card slide-in" onclick="navigateTo('subestacao')">
+      <h2><i class="fas fa-industry icon"></i>Subestação</h2>
+    </div>
+
+    <div class="card slide-in" onclick="navigateTo('frota')">
+      <h2><i class="fas fa-truck icon"></i>Frota</h2>
+    </div>
+
+    <!-- Botão de Auditoria (inicialmente oculto) -->
+    <div id="auditoria-card" class="card slide-in" style="display: none;" onclick="navigateTo('auditoria')">
+      <h2><i class="fas fa-search icon"></i>Auditoria</h2>
+    </div>
+
+    <button onclick="logout()" class="logout-btn">
+      <i class="fas fa-sign-out-alt icon"></i>Logout
+    </button>
+  </div>
+
+  <!-- Modal de Acesso Negado -->
+  <div id="access-denied-modal" class="access-denied-modal">
+    <div class="access-denied-content">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>Acesso negado!</span>
+    </div>
+  </div>
+
+  <script>
+    // Recupera os dados do usuário do localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    // Exibe as informações do usuário
+    if (user) {
+      document.getElementById('user-name').textContent = user.nome;
+      document.getElementById('user-matricula').textContent = user.matricula;
+      document.getElementById('user-cargo').textContent = user.cargo;
+
+      // Verifica se o usuário tem permissão para acessar a auditoria
+      const cargosPermitidos = ['Técnico', 'Engenheiro', 'ADMIN']; // Cargos que podem acessar a auditoria
+      if (cargosPermitidos.includes(user.cargo)) {
+        document.getElementById('auditoria-card').style.display = 'block'; // Mostra o botão de Auditoria
+      }
+    } else {
+      window.location.href = '/'; // Redireciona para o login se não houver usuário
+    }
+
+    // Função para exibir o modal de acesso negado
+    function showAccessDeniedModal() {
+      const modal = document.getElementById('access-denied-modal');
+      modal.style.display = 'flex'; // Mostra o modal
+
+      // Aplica o blur no fundo
+      document.body.classList.add('blur-background');
+
+      // Esconde o modal após 2 segundos
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.classList.remove('blur-background');
+      }, 2000); // Tempo de exibição: 2 segundos
+    }
+
+    // Função para navegar e capturar erros de acesso
+    async function navigateTo(page) {
+      const url = `/${page}`; // Monta a URL da página
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Para enviar cookies de sessão
+        });
+
+        if (response.ok) {
+          // Se a resposta for OK, redireciona para a página
+          window.location.href = url;
+        } else if (response.status === 403) {
+          // Se o acesso for negado, exibe o modal e NÃO redireciona
+          showAccessDeniedModal();
+        } else {
+          // Outros erros
+          showAccessDeniedModal();
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+        showAccessDeniedModal();
+      }
+    }
+
+    // Função para logout
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>

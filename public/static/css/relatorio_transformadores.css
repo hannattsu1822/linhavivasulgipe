@@ -1,0 +1,180 @@
+/* Estilos gerais */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.relatorio-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  color: #2c3e50;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+#checklistId {
+  font-size: 18px;
+  color: #666;
+  margin-left: auto;
+  padding-left: 20px; /* Espaçamento entre o título e o ID */
+}
+
+h2 {
+  color: #34495e;
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+}
+
+/* Estilos para as divisões */
+.divisao {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para os itens dentro das divisões */
+.relatorio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.relatorio-item {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.relatorio-item i {
+  margin-right: 10px;
+  color: #3498db;
+}
+
+.relatorio-item p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.relatorio-item p strong {
+  color: #2c3e50;
+}
+
+/* Estilo para o retângulo do Ano da Reforma */
+.relatorio-item.ano-reforma {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+/* Estilos para o grid do checklist */
+.checklist-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espaço entre os cartões */
+}
+
+.checklist-item {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px; /* Espaço entre os cartões */
+  width: 100%; /* Ocupa toda a largura disponível */
+  display: flex;
+  align-items: center;
+}
+
+.checklist-item i {
+  margin-right: 10px;
+  color: #3498db; /* Cor do ícone */
+}
+
+.checklist-item p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.checklist-item p strong {
+  color: #2c3e50;
+}
+
+/* Estilo para o retângulo do Transformador Destinado */
+.checklist-item.destinado {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+/* Estilos para o botão de voltar */
+.back-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Estilos para o botão de gerar PDF */
+.pdf-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: #dc3545; /* Vermelho */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.pdf-btn:hover {
+  background-color: #c82333; /* Vermelho mais escuro */
+}
+
+/* Estilos para mensagens de erro */
+.erro {
+  color: #e74c3c;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Oculta os botões ao gerar o PDF */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

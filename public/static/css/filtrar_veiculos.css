@@ -1,0 +1,367 @@
+/* Estilos base para todos os dispositivos */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  overflow: auto;
+}
+
+.filtrar-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 800px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.filtrar-container h1 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2575fc;
+}
+
+.filtrar-container h1 .icon {
+  margin-right: 10px;
+}
+
+/* Formulário de filtro */
+#filtroForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #333;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #2575fc;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #2575fc;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.2);
+}
+
+/* Botão de filtrar */
+#filtroForm button {
+  width: 100%;
+  padding: 12px;
+  background: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#filtroForm button:hover {
+  background: #1b5fd9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#filtroForm button:active {
+  transform: translateY(0);
+}
+
+/* Tabela de resultados */
+#resultados {
+  margin-top: 2rem;
+}
+
+#resultados h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #2575fc;
+}
+
+.table-responsive {
+  overflow-x: auto; /* Torna a tabela rolável horizontalmente */
+}
+
+#tabelaResultados {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#tabelaResultados th,
+#tabelaResultados td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+#tabelaResultados th {
+  background: #2575fc;
+  color: #fff;
+  font-weight: 600;
+}
+
+#tabelaResultados tbody tr:hover {
+  background: rgba(37, 117, 252, 0.1);
+}
+
+/* Ajustes para alinhar melhor a tabela */
+#tabelaResultados td {
+  vertical-align: middle;
+}
+
+#tabelaResultados td button {
+  margin: 2px;
+}
+
+/* Botão de voltar */
+.back-btn {
+  width: 100%;
+  padding: 10px;
+  background: #6c757d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.back-btn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:active {
+  transform: translateY(0);
+}
+
+.back-btn .icon {
+  margin-right: 8px;
+}
+
+/* Estilo para o botão de relatório */
+.report-btn {
+  padding: 6px 10px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.report-btn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.report-btn:active {
+  transform: translateY(0);
+}
+
+.report-btn .icon {
+  margin-right: 6px;
+}
+
+/* Estilo para o botão de editar */
+.edit-btn {
+  padding: 6px 10px;
+  background: #ffc107;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+}
+
+.edit-btn:hover {
+  background: #e0a800;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.edit-btn:active {
+  transform: translateY(0);
+}
+
+.edit-btn .icon {
+  margin-right: 6px;
+}
+
+/* Estilo para o botão de excluir */
+.delete-btn {
+  padding: 6px 10px;
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.delete-btn:active {
+  transform: translateY(0);
+}
+
+.delete-btn .icon {
+  margin-right: 6px;
+}
+
+/* Ajustes para os botões de ação */
+.acoes-botoes {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+/* Media Query para telas pequenas (360x800) */
+@media (max-width: 360px) {
+  body {
+    padding: 10px;
+  }
+
+  .filtrar-container {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .filtrar-container h1 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Formulário de filtro */
+  #filtroForm {
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  #filtroForm button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  /* Tabela de resultados */
+  #resultados {
+    margin-top: 1rem;
+  }
+
+  #resultados h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  #tabelaResultados {
+    font-size: 12px;
+  }
+
+  #tabelaResultados th,
+  #tabelaResultados td {
+    padding: 8px;
+  }
+
+  /* Ocultar colunas menos importantes em telas pequenas */
+  #tabelaResultados th:nth-child(4),
+  #tabelaResultados td:nth-child(4),
+  #tabelaResultados th:nth-child(5),
+  #tabelaResultados td:nth-child(5) {
+    display: none;
+  }
+
+  /* Botões de ação */
+  .acoes-botoes {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .delete-btn,
+  .report-btn,
+  .edit-btn {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  /* Botão de voltar */
+  .back-btn {
+    padding: 8px;
+    font-size: 14px;
+    margin-top: 1rem;
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="static/css/styles.css">
+  <link rel="stylesheet" href="static/css/login.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2><i class="fas fa-sign-in-alt icon"></i>Login</h2>
+    <input type="text" id="matricula" placeholder="Matrícula" required>
+    <input type="password" id="senha" placeholder="Senha" required>
+    <button onclick="login()"><i class="fas fa-sign-in-alt icon"></i>Entrar</button>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    async function login() {
+      const matricula = document.getElementById('matricula').value;
+      const senha = document.getElementById('senha').value;
+
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ matricula, senha }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Armazena os dados do usuário no localStorage
+        localStorage.setItem('user', JSON.stringify(result.user));
+        window.location.href = '/dashboard';
+      } else {
+        document.getElementById('message').textContent = result.message;
+      }
+    }
+  </script>
+</body>
+</html>

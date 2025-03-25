@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filtrar Transformadores</title>
+  <link rel="stylesheet" href="/static/css/filtrar_transformadores.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="filtrar-container">
+    <h1><i class="fas fa-filter icon"></i>Filtrar Transformadores</h1>
+
+    <!-- Formulário de filtro -->
+    <form id="filtroForm">
+      <div class="form-group">
+        <label for="numero_serie">Número de Série:</label>
+        <input type="text" id="numero_serie" name="numero_serie">
+      </div>
+
+      <div class="form-group">
+        <label for="matricula_responsavel">Responsável Técnico:</label>
+        <select id="matricula_responsavel" name="matricula_responsavel">
+          <option value="">Selecione um responsável</option>
+          <!-- As opções serão preenchidas dinamicamente via JavaScript -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="dataInicial">Data Inicial:</label>
+        <input type="date" id="dataInicial" name="dataInicial" placeholder="dd/mm/aaaa">
+      </div>
+
+      <div class="form-group">
+        <label for="dataFinal">Data Final:</label>
+        <input type="date" id="dataFinal" name="dataFinal" placeholder="dd/mm/aaaa">
+      </div>
+
+      <button type="submit">Filtrar</button>
+    </form>
+
+    <!-- Tabela de resultados -->
+    <div id="resultados">
+      <h2>Resultados</h2>
+      <table id="tabelaResultados">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Número de Série</th>
+            <th>Potência (kVA)</th>
+            <th>Marca</th>
+            <th>Data do Formulário</th>
+            <th>Responsável Técnico</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Os resultados serão preenchidos aqui dinamicamente -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Botão de voltar -->
+    <button onclick="window.location.href = '/transformadores'" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Transformadores
+    </button>
+  </div>
+
+  <script>
+    // Função para carregar os responsáveis técnicos no select
+    async function carregarResponsaveis() {
+      try {
+        const response = await fetch('/api/responsaveis');
+        if (!response.ok) {
+          throw new Error('Erro ao carregar responsáveis técnicos');
+        }
+        const responsaveis = await response.json();
+
+        const select = document.getElementById('matricula_responsavel');
+        responsaveis.forEach(responsavel => {
+          const option = document.createElement('option');
+          option.value = responsavel.matricula;
+          option.textContent = `${responsavel.matricula} - ${responsavel.nome}`; // Exibe matrícula e nome
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar responsáveis:', error);
+      }
+    }
+
+    // Função para buscar transformadores filtrados
+    async function buscarTransformadores(filtros) {
+      try {
+        const response = await fetch('/api/filtrar_transformadores', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(filtros),
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao buscar transformadores');
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Erro:', error);
+        return [];
+      }
+    }
+
+    // Função para exibir os resultados na tabela
+    function exibirResultados(dados) {
+      const tbody = document.querySelector('#tabelaResultados tbody');
+      tbody.innerHTML = ''; // Limpa os resultados anteriores
+
+      dados.forEach((item) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.id}</td>
+          <td>${item.numero_serie}</td>
+          <td>${item.potencia}</td>
+          <td>${item.marca}</td>
+          <td>${new Date(item.data_formulario).toLocaleDateString()}</td>
+          <td>${item.matricula_responsavel} - ${item.nome_responsavel}</td>
+          <td>
+            <div class="acoes-botoes">
+              <button onclick="excluirTransformador('${item.id}')" class="delete-btn">
+                <i class="fas fa-trash icon"></i>Excluir
+              </button>
+              <button onclick="abrirRelatorio('${item.id}')" class="report-btn">
+                <i class="fas fa-file-alt icon"></i>Relatório
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Função para excluir um transformador
+    async function excluirTransformador(id) {
+      if (confirm('Tem certeza que deseja excluir este transformador?')) {
+        try {
+          console.log(`Tentando excluir transformador com ID: ${id}`); // Log de depuração
+
+          const response = await fetch(`/api/excluir_transformador/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          console.log('Resposta do servidor:', response); // Log de depuração
+
+          if (!response.ok) {
+            const errorData = await response.json(); // Tenta capturar a mensagem de erro do backend
+            throw new Error(errorData.message || 'Erro ao excluir transformador');
+          }
+
+          // Recarrega os resultados após a exclusão
+          const filtros = {
+            numero_serie: document.getElementById('numero_serie').value,
+            matricula_responsavel: document.getElementById('matricula_responsavel').value,
+            dataInicial: document.getElementById('dataInicial').value,
+            dataFinal: document.getElementById('dataFinal').value,
+          };
+
+          const dados = await buscarTransformadores(filtros);
+          exibirResultados(dados);
+
+          alert('Transformador excluído com sucesso!');
+        } catch (error) {
+          console.error('Erro:', error);
+          alert(error.message || 'Erro ao excluir transformador');
+        }
+      }
+    }
+
+    // Função para abrir o relatório do formulário
+    function abrirRelatorio(id) {
+      window.location.href = `/relatorio_formulario?id=${id}`;
+    }
+
+    // Evento de submit do formulário de filtro
+    document.getElementById('filtroForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // Captura os valores dos filtros
+      const filtros = {
+        numero_serie: document.getElementById('numero_serie').value,
+        matricula_responsavel: document.getElementById('matricula_responsavel').value,
+        dataInicial: document.getElementById('dataInicial').value,
+        dataFinal: document.getElementById('dataFinal').value,
+      };
+
+      // Busca os transformadores filtrados
+      const dados = await buscarTransformadores(filtros);
+
+      // Exibe os resultados na tabela
+      exibirResultados(dados);
+    });
+
+    // Carrega os responsáveis técnicos ao carregar a página
+    document.addEventListener('DOMContentLoaded', carregarResponsaveis);
+  </script>
+</body>
+</html>

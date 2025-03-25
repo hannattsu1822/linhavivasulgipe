@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Transformadores</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/relatorio_transformadores.css">
+  <style>
+    /* Oculta os botões ao gerar o PDF */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="relatorio-container">
+    <h1>
+      <i class="fas fa-file-alt icon"></i>Relatório de Transformadores
+      <span id="checklistId" style="margin-left: auto; font-size: 18px; color: #666;"></span>
+    </h1>
+
+    <!-- Conteúdo do relatório -->
+    <div id="relatorioContent">
+      <!-- As informações da inspeção serão preenchidas aqui dinamicamente -->
+    </div>
+
+    <!-- Botão de voltar -->
+    <button onclick="window.location.href = '/transformadores'" class="back-btn no-print">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Transformadores
+    </button>
+
+    <!-- Botão para gerar PDF -->
+    <button onclick="gerarPDF()" class="pdf-btn no-print">
+      <i class="fas fa-file-pdf icon"></i>Gerar PDF
+    </button>
+  </div>
+
+  <script>
+    // Função para tratar valores undefined
+    function tratarValor(valor) {
+      return valor || "Não informado";
+    }
+
+    // Função para formatar valores concatenados com vírgulas
+    function formatarValoresConcatenados(valor) {
+      if (!valor) return "Não informado";
+      return valor.split(',').join(', ');
+    }
+
+    // Função para simplificar a data (formato: DD/MM/AAAA)
+    function simplificarData(data) {
+      if (!data) return "Não informado";
+      const date = new Date(data);
+      if (isNaN(date.getTime())) return "Data inválida";
+      const dia = String(date.getDate()).padStart(2, '0');
+      const mes = String(date.getMonth() + 1).padStart(2, '0');
+      const ano = date.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // Função para carregar os dados da inspeção
+    async function carregarRelatorio() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const checklistId = urlParams.get('id');
+
+      if (!checklistId) {
+        alert('ID do checklist não encontrado!');
+        return;
+      }
+
+      // Preenche o ID no cabeçalho
+      document.getElementById('checklistId').textContent = `ID: ${checklistId}`;
+
+      try {
+        // Faz a requisição para a API pública usando o ID do checklist
+        const response = await fetch(`/api/checklist_transformadores_publico/${checklistId}`);
+        const data = await response.json();
+        console.log(data); // Verifique o JSON retornado
+
+        const relatorioContent = document.getElementById('relatorioContent');
+
+        // Renderiza as informações gerais
+        relatorioContent.innerHTML = `
+          <!-- Informações Gerais -->
+          <div class="divisao">
+            <h2>Informações Gerais</h2>
+            <div class="relatorio-grid">
+              <div class="relatorio-item">
+                <i class="fas fa-hashtag"></i>
+                <p><strong>Número de Série:</strong> ${tratarValor(data.numero_serie)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-calendar-alt"></i>
+                <p><strong>Data de Fabricação:</strong> ${simplificarData(data.data_fabricacao)}</p>
+              </div>
+              <div class="relatorio-item ano-reforma">
+                <i class="fas fa-calendar-alt"></i>
+                <p><strong>Ano da Reforma:</strong> ${simplificarData(data.data_reformado) || 'N/A'}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-calendar-alt"></i>
+                <p><strong>Data do Formulário:</strong> ${simplificarData(data.data_formulario)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-user"></i>
+                <p><strong>Responsável:</strong> ${tratarValor(data.nome_responsavel)} (${tratarValor(data.matricula_responsavel)})</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-user-tie"></i>
+                <p><strong>Supervisor:</strong> ${tratarValor(data.nome_supervisor)}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dados do Trafo -->
+          <div class="divisao">
+            <h2>Dados do Trafo</h2>
+            <div class="relatorio-grid">
+              <div class="relatorio-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <p><strong>Local de Retirada:</strong> ${tratarValor(data.local_retirada)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-bolt"></i>
+                <p><strong>Número de Fases:</strong> ${tratarValor(data.numero_fases)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-bolt"></i>
+                <p><strong>Potência:</strong> ${tratarValor(data.potencia)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-industry"></i>
+                <p><strong>Marca:</strong> ${tratarValor(data.marca)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-globe"></i>
+                <p><strong>Regional:</strong> ${tratarValor(data.regional)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p><strong>Motivo de Desativação:</strong> ${tratarValor(data.motivo_desativacao)}</p>
+              </div>
+              <div class="relatorio-item">
+                <i class="fas fa-calendar-alt"></i>
+                <p><strong>Data de Entrada no Almoxarifado:</strong> ${simplificarData(data.data_entrada_almoxarifado)}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checklist -->
+          <div class="divisao">
+            <h2>Checklist</h2>
+            <div class="checklist-grid">
+              <!-- Detalhes do Tanque -->
+              <div class="checklist-item">
+                <i class="fas fa-tint"></i>
+                <p><strong>Detalhes do Tanque:</strong> ${formatarValoresConcatenados(data.detalhes_tanque)}</p>
+              </div>
+
+              <!-- Corrosão do Tanque -->
+              <div class="checklist-item">
+                <i class="fas fa-tint"></i>
+                <p><strong>Corrosão do Tanque:</strong> ${tratarValor(data.corrosao_tanque)}</p>
+              </div>
+
+              <!-- Outros itens do checklist -->
+              <div class="checklist-item">
+                <i class="fas fa-plug"></i>
+                <p><strong>Conectores:</strong> ${formatarValoresConcatenados(data.conectores)}</p>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-cogs"></i>
+                <p><strong>Buchas Primárias:</strong> ${formatarValoresConcatenados(data.buchas_primarias)}</p>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-cogs"></i>
+                <p><strong>Buchas Secundárias:</strong> ${formatarValoresConcatenados(data.buchas_secundarias)}</p>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-bolt"></i>
+                <p><strong>Bobina 1:</strong> ${tratarValor(data.avaliacao_bobina_i)}</p>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-bolt"></i>
+                <p><strong>Bobina 2:</strong> ${tratarValor(data.avaliacao_bobina_ii)}</p>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-bolt"></i>
+                <p><strong>Bobina 3:</strong> ${tratarValor(data.avaliacao_bobina_iii)}</p>
+              </div>
+
+              <!-- Conclusão -->
+              <div class="checklist-item">
+                <i class="fas fa-check-circle"></i>
+                <p><strong>Conclusão:</strong> ${tratarValor(data.conclusao) || 'Transformador destinado'}</p>
+              </div>
+
+              <!-- Retângulo para Transformador Destinado -->
+              <div class="checklist-item destinado">
+                <i class="fas fa-check-circle"></i>
+                <p><strong>Transformador Destinado:</strong> ${tratarValor(data.transformador_destinado) || 'Não informado'}</p>
+              </div>
+            </div>
+          </div>
+
+          ${data.observacoes ? `
+            <div class="divisao">
+              <h2>Observações</h2>
+              <div class="relatorio-item">
+                <p>${data.observacoes}</p>
+              </div>
+            </div>
+          ` : ''}
+        `;
+      } catch (error) {
+        console.error('Erro ao carregar relatório:', error);
+        relatorioContent.innerHTML = `<p class="erro">Erro ao carregar o relatório. Tente novamente mais tarde.</p>`;
+      }
+    }
+
+    // Função para gerar PDF
+    function gerarPDF() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const checklistId = urlParams.get('id');
+
+      if (checklistId) {
+        // Oculta os botões antes de gerar o PDF
+        document.querySelectorAll('.no-print').forEach(button => {
+          button.style.display = 'none';
+        });
+
+        // Gera o PDF
+        window.location.href = `/api/gerar_pdf/${checklistId}`;
+
+        // Restaura os botões após um pequeno delay (opcional)
+        setTimeout(() => {
+          document.querySelectorAll('.no-print').forEach(button => {
+            button.style.display = 'inline-block'; // Ou o valor original do display
+          });
+        }, 1000); // 1 segundo de delay
+      } else {
+        alert('ID do checklist não encontrado!');
+      }
+    }
+
+    // Carrega o relatório ao carregar a página
+    window.onload = carregarRelatorio;
+  </script>
+</body>
+</html>

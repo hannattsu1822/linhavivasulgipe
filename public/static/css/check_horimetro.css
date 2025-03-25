@@ -1,0 +1,171 @@
+/* Estilos específicos para a página de Check Horímetro */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    overflow: auto;
+}
+
+.frota-container {
+    background: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.frota-container h1 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.frota-container h1 .icon {
+    margin-right: 10px;
+}
+
+/* Estilo para o campo de seleção de placa */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-group select:hover {
+    border-color: #2575fc;
+}
+
+.form-group select:focus {
+    border-color: #2575fc;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.2);
+}
+
+/* Estilo para o conteúdo do horímetro */
+#horimetroContent {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+#horimetroContent p {
+    margin: 0.5rem 0;
+    font-size: 14px;
+    color: #fff;
+}
+
+#horimetroContent strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Estilo para o status do horímetro */
+.status {
+    padding: 10px;
+    border-radius: 8px;
+    color: white;
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 600;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.status-verde {
+    background-color: #28a745; /* Verde */
+}
+
+.status-amarelo {
+    background-color: #ffc107; /* Amarelo */
+    color: #333;
+}
+
+.status-vermelho {
+    background-color: #dc3545; /* Vermelho */
+}
+
+/* Botão de voltar */
+.back-btn {
+    width: 100%;
+    padding: 12px;
+    background: #6c757d; /* Cinza para o botão de voltar */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-btn:hover {
+    background: #5a6268; /* Cinza mais escuro no hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:active {
+    transform: translateY(0);
+}
+
+.back-btn .icon {
+    margin-right: 8px;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

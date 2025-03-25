@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filtrar Veículos</title>
+  <link rel="stylesheet" href="/static/css/filtrar_veiculos.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="filtrar-container">
+    <h1><i class="fas fa-filter icon"></i>Filtrar Inspeções</h1>
+
+    <!-- Formulário de filtro -->
+    <form id="filtroForm">
+      <div class="form-group">
+        <label for="placa">Placa do Veículo:</label>
+        <select id="placa" name="placa">
+          <option value="">Selecione uma placa</option>
+          <!-- Opções serão preenchidas dinamicamente -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="matricula">Matrícula do Motorista:</label>
+        <select id="matricula" name="matricula">
+          <option value="">Selecione uma matrícula</option>
+          <!-- Opções serão preenchidas dinamicamente -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="dataInicial">Data Inicial:</label>
+        <input type="date" id="dataInicial" name="dataInicial">
+      </div>
+
+      <div class="form-group">
+        <label for="dataFinal">Data Final:</label>
+        <input type="date" id="dataFinal" name="dataFinal">
+      </div>
+
+      <!-- Botão de filtrar -->
+      <button type="submit">Filtrar</button>
+    </form>
+
+    <!-- Tabela de resultados -->
+    <div id="resultados">
+      <h2>Resultados</h2>
+      <div class="table-responsive"> <!-- Container para a tabela rolável -->
+        <table id="tabelaResultados">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Placa</th>
+              <th>Matrícula</th>
+              <th>Data</th>
+              <th>KM Atual</th>
+              <th>Horímetro</th>
+              <th>Relatório</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Os resultados serão preenchidos aqui dinamicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Botão de voltar -->
+    <button onclick="window.location.href = '/frota'" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Frota
+    </button>
+  </div>
+
+  <script>
+    // Função para carregar as placas dos veículos
+    async function carregarPlacas() {
+      try {
+        const response = await fetch('/api/placas');
+        const data = await response.json();
+
+        const placaSelect = document.getElementById('placa');
+
+        // Limpa o menu suspenso
+        placaSelect.innerHTML = '<option value="">Selecione uma placa</option>';
+
+        // Adiciona as opções
+        data.forEach((veiculo) => {
+          const option = document.createElement('option');
+          option.value = veiculo.placa;
+          option.textContent = veiculo.placa;
+          placaSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar placas:', error);
+      }
+    }
+
+    // Função para carregar as matrículas dos motoristas
+    async function carregarMatriculas() {
+      try {
+        const response = await fetch('/api/motoristas');
+        const data = await response.json();
+
+        const matriculaSelect = document.getElementById('matricula');
+
+        // Limpa o menu suspenso
+        matriculaSelect.innerHTML = '<option value="">Selecione uma matrícula</option>';
+
+        // Adiciona as opções
+        data.forEach((motorista) => {
+          const option = document.createElement('option');
+          option.value = motorista.matricula;
+          option.textContent = `${motorista.matricula} - ${motorista.nome}`;
+          matriculaSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar matrículas:', error);
+      }
+    }
+
+    // Função para buscar inspeções filtradas
+    async function buscarInspecoes(filtros) {
+      try {
+        const response = await fetch('/api/filtrar_inspecoes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(filtros),
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao buscar inspeções');
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Erro:', error);
+        return [];
+      }
+    }
+
+    // Função para exibir os resultados na tabela
+    function exibirResultados(inspecoes) {
+      const tbody = document.querySelector('#tabelaResultados tbody');
+      tbody.innerHTML = ''; // Limpa os resultados anteriores
+
+      inspecoes.forEach((inspecao) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${inspecao.id}</td>
+          <td>${inspecao.placa}</td>
+          <td>${inspecao.matricula}</td>
+          <td>${new Date(inspecao.data_inspecao).toLocaleDateString()}</td>
+          <td>${inspecao.km_atual}</td>
+          <td>${inspecao.horimetro}</td>
+          <td>
+            <button onclick="window.location.href = '/relatorio_veiculos?id=${inspecao.id}'" class="report-btn">
+              <i class="fas fa-file-alt icon"></i>Relatório
+            </button>
+          </td>
+          <td>
+            <div class="acoes-botoes">
+              <button onclick="editarInspecao(${inspecao.id})" class="edit-btn">
+                <i class="fas fa-edit icon"></i>Editar
+              </button>
+              <button onclick="excluirInspecao(${inspecao.id})" class="delete-btn">
+                <i class="fas fa-trash icon"></i>Excluir
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Função para editar uma inspeção
+    async function editarInspecao(id) {
+      window.location.href = `/editar_inspecao?id=${id}`;
+    }
+
+    // Função para excluir uma inspeção
+    async function excluirInspecao(id) {
+      if (confirm('Tem certeza que deseja excluir esta inspeção?')) {
+        try {
+          const response = await fetch(`/api/excluir_inspecao/${id}`, {
+            method: 'DELETE',
+          });
+
+          if (!response.ok) {
+            throw new Error('Erro ao excluir inspeção');
+          }
+
+          // Recarrega os resultados após a exclusão
+          const filtros = {
+            placa: document.getElementById('placa').value,
+            matricula: document.getElementById('matricula').value,
+            dataInicial: document.getElementById('dataInicial').value,
+            dataFinal: document.getElementById('dataFinal').value,
+          };
+
+          const inspecoes = await buscarInspecoes(filtros);
+          exibirResultados(inspecoes);
+        } catch (error) {
+          console.error('Erro:', error);
+          alert('Erro ao excluir inspeção');
+        }
+      }
+    }
+
+    // Evento de submit do formulário
+    document.getElementById('filtroForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // Captura os valores dos filtros
+      const filtros = {
+        placa: document.getElementById('placa').value,
+        matricula: document.getElementById('matricula').value,
+        dataInicial: document.getElementById('dataInicial').value,
+        dataFinal: document.getElementById('dataFinal').value,
+      };
+
+      // Verifica se pelo menos um filtro foi preenchido
+      if (!filtros.placa && !filtros.matricula && !filtros.dataInicial && !filtros.dataFinal) {
+        alert('Preencha pelo menos um filtro!');
+        return;
+      }
+
+      // Busca as inspeções filtradas
+      const inspecoes = await buscarInspecoes(filtros);
+
+      // Exibe os resultados na tabela
+      exibirResultados(inspecoes);
+    });
+
+    // Carrega as placas e matrículas ao carregar a página
+    window.onload = () => {
+      carregarPlacas();
+      carregarMatriculas();
+    };
+  </script>
+</body>
+</html>

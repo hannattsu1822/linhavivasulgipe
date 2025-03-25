@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Transformadores</title>
+  <link rel="stylesheet" href="/static/css/formulario_transformadores.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="formulario-container">
+    <div class="header">
+      <h1><i class="fas fa-clipboard-check icon"></i>Formulário de Transformadores</h1>
+      <p>Preencha os campos abaixo para realizar o checklist do transformador.</p>
+    </div>
+
+    <!-- Formulário de checklist -->
+    <form id="checklistForm">
+      <!-- Número de Série -->
+      <div class="form-group">
+        <label for="numero_serie">Número de Série:</label>
+        <input type="text" id="numero_serie" name="numero_serie" required readonly>
+      </div>
+
+      <!-- Data de Fabricação -->
+      <div class="form-group">
+        <label for="data_fabricacao">Data de Fabricação:</label>
+        <input type="date" id="data_fabricacao" name="data_fabricacao" required>
+      </div>
+
+      <!-- Reformado -->
+      <div class="form-group">
+        <label>Reformado:</label>
+        <div class="radio-group">
+          <label><input type="radio" name="reformado" value="true" required> Sim</label>
+          <label><input type="radio" name="reformado" value="false" required> Não</label>
+        </div>
+      </div>
+
+      <!-- Data da Reforma (se reformado for Sim) -->
+      <div class="form-group" id="dataReformadoGroup" style="display: none;">
+        <label for="data_reformado">Data da Reforma:</label>
+        <input type="date" id="data_reformado" name="data_reformado">
+      </div>
+
+      <!-- Detalhes do Tanque (Botões de Seleção) -->
+      <div class="form-group">
+        <label>Detalhes do Tanque:</label>
+        <div class="button-group">
+          <button type="button" data-value="NORMAL">Normal</button>
+          <button type="button" data-value="FURADO">Furado</button>
+          <button type="button" data-value="PINTURA_DESGASTADA">Pintura Desgastada</button>
+          <button type="button" data-value="VESTIGIOS_VAZAMENTO">Vestígios de Vazamento</button>
+          <button type="button" data-value="VESTIGIOS_OLEO_QUEIMADO">Vestígios de Óleo Queimado</button>
+          <button type="button" data-value="PLAQUETA_ILEGIVEL">Plaqueta Ilegível</button>
+          <button type="button" data-value="CORROSAO">Corrosão</button>
+        </div>
+        <input type="hidden" id="detalhes_tanque" name="detalhes_tanque">
+      </div>
+
+      <!-- Tipo de Corrosão (aparece apenas se "Corrosão" for selecionada) -->
+      <div class="form-group" id="tipoCorrosaoGroup" style="display: none;">
+        <label for="tipo_corrosao">Tipo de Corrosão:</label>
+        <select id="tipo_corrosao" name="tipo_corrosao">
+          <option value="">Selecione...</option>
+          <option value="PEQUENAS">Pequenas</option>
+          <option value="REGULAR">Regular</option>
+          <option value="CRITICAS">Críticas</option>
+        </select>
+      </div>
+
+      <!-- Buchas Primárias (Botões de Seleção) -->
+      <div class="form-group">
+        <label>Buchas Primárias:</label>
+        <div class="button-group">
+          <button type="button" data-value="NORMAL">Normal</button>
+          <button type="button" data-value="TRINCADA">Tricada</button>
+          <button type="button" data-value="QUEBRADA">Quebrada</button>
+          <button type="button" data-value="FOLGADA">Folgada</button>
+          <button type="button" data-value="VEDACOES_RESSECADAS">Vedações Ressecadas</button>
+          <button type="button" data-value="SINAIS_CURTO_CIRCUITO">Sinais de Curto Circuito</button>
+        </div>
+        <input type="hidden" id="buchas_primarias" name="buchas_primarias">
+      </div>
+
+      <!-- Buchas Secundárias (Botões de Seleção) -->
+      <div class="form-group">
+        <label>Buchas Secundárias:</label>
+        <div class="button-group">
+          <button type="button" data-value="NORMAL">Normal</button>
+          <button type="button" data-value="TRINCADA">Tricada</button>
+          <button type="button" data-value="QUEBRADA">Quebrada</button>
+          <button type="button" data-value="FOLGADA">Folgada</button>
+          <button type="button" data-value="VEDACOES_RESSECADAS">Vedações Ressecadas</button>
+          <button type="button" data-value="SINAIS_CURTO_CIRCUITO">Sinais de Curto Circuito</button>
+        </div>
+        <input type="hidden" id="buchas_secundarias" name="buchas_secundarias">
+      </div>
+
+      <!-- Conectores (Botões de Seleção) -->
+      <div class="form-group">
+        <label>Conectores:</label>
+        <div class="button-group">
+          <button type="button" data-value="NORMAL">Normal</button>
+          <button type="button" data-value="SINAIS_DE_DESCARGAS_ATMOSFERICAS">Sinais de Descargas Atmosféricas</button>
+          <button type="button" data-value="TRINCADO">Tricado</button>
+          <button type="button" data-value="FALTANDO_PARAFUSOS">Faltando Parafusos</button>
+        </div>
+        <input type="hidden" id="conectores" name="conectores">
+      </div>
+
+      <!-- Avaliação de Bobina I (Seleção Única) -->
+      <div class="form-group">
+        <label>Avaliação Bobina I:</label>
+        <div class="button-group single-select">
+          <button type="button" data-value="NORMAL">Normal</button>
+          <button type="button" data-value="CURTO_CIRCUITO">Curto Circuito</button>
+          <button type="button" data-value="EM_ABERTO">Em Aberto</button>
+        </div>
+        <input type="hidden" id="avaliacao_bobina_i" name="avaliacao_bobina_i">
+      </div>
+
+      <!-- Avaliação de Bobina II (Seleção Única) -->
+      <div class="form-group">
+        <label>Avaliação Bobina II:</label>
+        <div class="button-group single-select">
+          <button type="button" data-value="NORMAL">Normal</button>
+          <button type="button" data-value="CURTO_CIRCUITO">Curto Circuito</button>
+          <button type="button" data-value="EM_ABERTO">Em Aberto</button>
+        </div>
+        <input type="hidden" id="avaliacao_bobina_ii" name="avaliacao_bobina_ii">
+      </div>
+
+      <!-- Avaliação de Bobina III (Seleção Única) -->
+      <div class="form-group">
+        <label>Avaliação Bobina III:</label>
+        <div class="button-group single-select">
+          <button type="button" data-value="NORMAL">Normal</button>
+          <button type="button" data-value="CURTO_CIRCUITO">Curto Circuito</button>
+          <button type="button" data-value="EM_ABERTO">Em Aberto</button>
+        </div>
+        <input type="hidden" id="avaliacao_bobina_iii" name="avaliacao_bobina_iii">
+      </div>
+
+      <!-- Conclusão (Seleção Única) -->
+      <div class="form-group">
+        <label>Conclusão:</label>
+        <div class="button-group single-select">
+          <button type="button" data-value="QUEIMADO">Queimado</button>
+          <button type="button" data-value="NORMAL">Normal</button>
+        </div>
+        <input type="hidden" id="conclusao" name="conclusao">
+      </div>
+
+      <!-- Transformador Destinado (Seleção Única) -->
+      <div class="form-group">
+        <label>Transformador Destinado:</label>
+        <div class="button-group single-select">
+          <button type="button" data-value="SUCATA">Sucata</button>
+          <button type="button" data-value="ESTOQUE">Estoque</button>
+          <button type="button" data-value="MANUTENCAO">Manutenção</button>
+        </div>
+        <input type="hidden" id="transformador_destinado" name="transformador_destinado">
+      </div>
+
+      <!-- Responsável Técnico -->
+      <div class="form-group">
+        <label for="matricula_responsavel">Responsável Técnico:</label>
+        <select id="matricula_responsavel" name="matricula_responsavel" required>
+          <option value="">Selecione um responsável...</option>
+        </select>
+      </div>
+
+      <!-- Supervisor Técnico -->
+      <div class="form-group">
+        <label for="matricula_supervisor">Supervisor Técnico:</label>
+        <select id="matricula_supervisor" name="matricula_supervisor" required>
+          <option value="">Selecione um supervisor...</option>
+        </select>
+      </div>
+
+      <!-- Observações -->
+      <div class="form-group">
+        <label for="observacoes">Observações:</label>
+        <textarea id="observacoes" name="observacoes" rows="3"></textarea>
+      </div>
+
+      <!-- Botão de Envio -->
+      <button type="submit" id="submitButton">
+        <i class="fas fa-save icon"></i>Salvar Checklist
+      </button>
+    </form>
+
+    <!-- Botão de voltar -->
+    <button id="voltarButton" onclick="window.location.href='/transformadores'">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Transformadores
+    </button>
+
+    <!-- Mensagem de feedback -->
+    <div id="mensagem"></div>
+  </div>
+
+  <script>
+    // Captura o número de série da URL e preenche o campo
+    const urlParams = new URLSearchParams(window.location.search);
+    const numeroSerie = urlParams.get('numero_serie');
+    if (numeroSerie) {
+      document.getElementById('numero_serie').value = numeroSerie;
+    } else {
+      alert("Número de série não encontrado na URL!");
+      window.location.href = '/transformadores'; // Redireciona de volta se não houver número de série
+    }
+
+    // Mostrar/ocultar campo de data da reforma
+    document.querySelectorAll('input[name="reformado"]').forEach((radio) => {
+      radio.addEventListener('change', (e) => {
+        const dataReformadoGroup = document.getElementById('dataReformadoGroup');
+        dataReformadoGroup.style.display = e.target.value === 'true' ? 'block' : 'none';
+      });
+    });
+
+    // Função para configurar os botões de seleção
+    function setupButtonGroup(buttonGroup, hiddenInput, isSingleSelect = false) {
+      const selectedOptions = new Set();
+
+      buttonGroup.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+          const value = e.target.getAttribute('data-value');
+
+          if (isSingleSelect) {
+            // Seleção única: desmarca todos os outros botões
+            buttonGroup.querySelectorAll('button').forEach((button) => {
+              button.classList.remove('selected');
+            });
+            selectedOptions.clear();
+          }
+
+          if (selectedOptions.has(value)) {
+            selectedOptions.delete(value);
+            e.target.classList.remove('selected');
+          } else {
+            selectedOptions.add(value);
+            e.target.classList.add('selected');
+          }
+
+          hiddenInput.value = Array.from(selectedOptions).join(',');
+          console.log('Campo oculto atualizado:', hiddenInput.id, hiddenInput.value); // Log de depuração
+
+          // Lógica para exibir o campo de tipo de corrosão
+          if (hiddenInput.id === 'detalhes_tanque') {
+            const tipoCorrosaoGroup = document.getElementById('tipoCorrosaoGroup');
+            tipoCorrosaoGroup.style.display = selectedOptions.has('CORROSAO') ? 'block' : 'none';
+          }
+        }
+      });
+    }
+
+    // Configura os botões de seleção
+    const buttonGroups = document.querySelectorAll('.button-group');
+    buttonGroups.forEach((buttonGroup) => {
+      const hiddenInput = buttonGroup.nextElementSibling;
+      const isSingleSelect = buttonGroup.classList.contains('single-select');
+      setupButtonGroup(buttonGroup, hiddenInput, isSingleSelect);
+    });
+
+    // Função para carregar os responsáveis técnicos
+    async function carregarResponsaveis() {
+      try {
+        const response = await fetch('/api/responsaveis');
+        const responsaveis = await response.json();
+
+        const selectResponsavel = document.getElementById('matricula_responsavel');
+
+        // Limpa as opções existentes
+        selectResponsavel.innerHTML = '<option value="">Selecione um responsável...</option>';
+
+        // Adiciona os responsáveis técnicos ao select
+        responsaveis.forEach(responsavel => {
+          const option = document.createElement('option');
+          option.value = responsavel.matricula;
+          option.textContent = `${responsavel.nome} (${responsavel.matricula})`;
+          selectResponsavel.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar responsáveis:', error);
+      }
+    }
+
+    // Função para carregar os supervisores técnicos
+    async function carregarSupervisores() {
+      try {
+        const response = await fetch('/api/supervisores');
+        const supervisores = await response.json();
+
+        const selectSupervisor = document.getElementById('matricula_supervisor');
+
+        // Limpa as opções existentes
+        selectSupervisor.innerHTML = '<option value="">Selecione um supervisor...</option>';
+
+        // Adiciona os supervisores técnicos ao select
+        supervisores.forEach(supervisor => {
+          const option = document.createElement('option');
+          option.value = supervisor.matricula;
+          option.textContent = `${supervisor.nome} (${supervisor.matricula})`;
+          selectSupervisor.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar supervisores:', error);
+      }
+    }
+
+    // Carrega os responsáveis e supervisores técnicos quando a página é carregada
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarResponsaveis();
+      carregarSupervisores();
+    });
+
+    // Enviar formulário
+    document.getElementById('checklistForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+
+      // Verifica se o campo "corrosao_tanque" foi preenchido
+      if (!formData.get('tipo_corrosao')) {
+        formData.set('corrosao_tanque', 'NENHUMA'); // Valor padrão caso não haja corrosão
+      } else {
+        formData.set('corrosao_tanque', formData.get('tipo_corrosao')); // Envia o tipo de corrosão selecionado
+      }
+
+      console.log('Dados enviados:', Object.fromEntries(formData)); // Log de depuração
+
+      const submitButton = document.getElementById('submitButton');
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<i class="fas fa-spinner fa-spin icon"></i>Salvando...';
+
+      try {
+        const response = await fetch('/api/salvar_checklist', {
+          method: 'POST',
+          body: JSON.stringify(Object.fromEntries(formData)),
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          document.getElementById('mensagem').textContent = result.message || 'Checklist salvo com sucesso!';
+          document.getElementById('mensagem').className = 'sucesso';
+
+          // Redireciona após 1,5 segundos
+          setTimeout(() => {
+            window.location.href = '/transformadores';
+          }, 1500);
+        } else {
+          document.getElementById('mensagem').textContent = result.message || 'Erro ao salvar checklist!';
+          document.getElementById('mensagem').className = 'erro';
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        document.getElementById('mensagem').textContent = 'Erro ao salvar checklist!';
+        document.getElementById('mensagem').className = 'erro';
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<i class="fas fa-save icon"></i>Salvar Checklist';
+      }
+    });
+  </script>
+</body>
+</html>

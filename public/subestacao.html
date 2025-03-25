@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subestação</title>
+  <link rel="stylesheet" href="static/css/styles.css"> <!-- Estilos globais -->
+  <link rel="stylesheet" href="static/css/subestacao.css"> <!-- Estilos específicos de Subestação -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="subestacao-container">
+    <h1><i class="fas fa-industry icon"></i>Subestação</h1>
+
+    <!-- Botões de ação -->
+    <div class="actions">
+      <button onclick="equipamentos()">
+        <i class="fas fa-cogs icon"></i>Equipamentos
+      </button>
+      <button onclick="analiseAmostras()">
+        <i class="fas fa-flask icon"></i>Análise de Amostras
+      </button>
+      <button onclick="intervencoes()">
+        <i class="fas fa-tools icon"></i>Intervenções
+      </button>
+      <button onclick="filtrarOperacoes()">
+        <i class="fas fa-filter icon"></i>Filtrar Operações
+      </button>
+    </div>
+
+    <!-- Botão de voltar -->
+    <button onclick="window.location.href = '/dashboard'" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar ao Dashboard
+    </button>
+  </div>
+
+  <script>
+    function equipamentos() {
+      alert('Equipamentos clicado!');
+      // Adicione a lógica para equipamentos aqui
+    }
+
+    function analiseAmostras() {
+      alert('Análise de Amostras clicado!');
+      // Adicione a lógica para análise de amostras aqui
+    }
+
+    function intervencoes() {
+      alert('Intervenções clicado!');
+      // Adicione a lógica para intervenções aqui
+    }
+
+    function filtrarOperacoes() {
+      alert('Filtrar Operações clicado!');
+      // Adicione a lógica para filtrar operações aqui
+    }
+  </script>
+</body>
+</html>

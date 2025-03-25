@@ -1,0 +1,255 @@
+/* Estilos específicos para a página de Formulário de Transformadores */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  overflow: auto;
+}
+
+.formulario-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 90%;
+  max-width: 600px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.formulario-container .header {
+  margin-bottom: 2rem;
+}
+
+.formulario-container h1 {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2575fc;
+}
+
+.formulario-container h1 .icon {
+  margin-right: 10px;
+  font-size: 1.5rem;
+}
+
+.formulario-container p {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+/* Formulário de checklist */
+#checklistForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  color: #333;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: #2575fc;
+  box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #2575fc;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+}
+
+/* Botões de seleção para "Detalhes do Tanque" */
+.button-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.8rem;
+}
+
+.button-group button {
+  padding: 10px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-group button.selected {
+  background: #2575fc;
+  color: #fff;
+  border-color: #2575fc;
+}
+
+.button-group button:hover {
+  background: #1b5fd9;
+  color: #fff;
+  border-color: #1b5fd9;
+}
+
+/* Estilos para os radio buttons (Reformado) */
+.radio-group {
+  display: flex;
+  gap: 1rem;
+  padding: 10px;
+  background: rgba(245, 245, 245, 0.9);
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.radio-group label:hover {
+  background: rgba(37, 117, 252, 0.1);
+}
+
+.radio-group label input {
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Botão de envio */
+#submitButton {
+  width: 100%;
+  padding: 14px;
+  background: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#submitButton:hover {
+  background: #1b5fd9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+#submitButton:active {
+  transform: translateY(0);
+}
+
+#submitButton .icon {
+  font-size: 1rem;
+}
+
+/* Botão de voltar */
+#voltarButton {
+  width: 100%;
+  padding: 14px;
+  background: #6a11cb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+#voltarButton:hover {
+  background: #4d0a9e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+#voltarButton:active {
+  transform: translateY(0);
+}
+
+/* Mensagem de feedback */
+#mensagem {
+  margin-top: 1.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#mensagem.sucesso {
+  color: #4caf50;
+  border: 1px solid #4caf50;
+}
+
+#mensagem.erro {
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+/* Animação de fadeIn */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,86 @@
+/* Estilos específicos para a tela de login */
+.login-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 2rem; /* Padding aumentado */
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 90%; /* Largura ajustada */
+  max-width: 400px; /* Largura máxima aumentada */
+  animation: fadeIn 0.5s ease-in-out;
+  margin: 0 auto; /* Centraliza o container */
+}
+
+.login-container h2 {
+  margin-bottom: 1.5rem; /* Espaçamento aumentado */
+  font-weight: 600;
+  font-size: 1.8rem; /* Tamanho da fonte aumentado */
+}
+
+.login-container input {
+  width: 100%; /* Largura total do container */
+  padding: 10px; /* Padding aumentado */
+  margin: 10px 0; /* Espaçamento aumentado */
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 16px; /* Tamanho da fonte aumentado */
+  outline: none;
+  transition: background 0.3s ease;
+}
+
+.login-container input:focus {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.login-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-container button {
+  width: 50%; /* Largura reduzida */
+  padding: 10px; /* Padding aumentado */
+  background: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px; /* Tamanho da fonte aumentado */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px auto; /* Centraliza o botão */
+  display: block; /* Garante que o botão fique em bloco */
+}
+
+.login-container button:hover {
+  background: #1b5fd9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.login-container button:active {
+  transform: translateY(0);
+}
+
+#message {
+  margin-top: 1rem; /* Espaçamento aumentado */
+  color: #ff6b6b;
+  font-size: 14px; /* Tamanho da fonte aumentado */
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  75% {
+    transform: translateX(-10px);
+  }
+}

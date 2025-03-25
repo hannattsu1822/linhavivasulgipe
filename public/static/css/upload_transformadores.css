@@ -1,0 +1,136 @@
+/* Estilos gerais */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.upload-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  color: #2c3e50;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Estilos para o formulário de upload */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.file-input {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.file-input input[type="file"] {
+  opacity: 0;
+  width: 100%;
+  height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.file-custom {
+  display: block;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  color: #666;
+}
+
+.file-custom::after {
+  content: 'Escolher arquivo';
+  color: #3498db;
+  font-weight: 600;
+}
+
+.file-input input[type="file"]:focus + .file-custom {
+  border-color: #3498db;
+}
+
+/* Estilos para o botão de upload */
+#uploadButton {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+#uploadButton:hover {
+  background-color: #2980b9;
+}
+
+#uploadButton .icon {
+  margin-right: 10px;
+}
+
+/* Estilos para mensagens de feedback */
+#mensagem {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.sucesso {
+  color: #28a745;
+}
+
+.erro {
+  color: #dc3545;
+}
+
+/* Estilos para o botão de voltar */
+.back-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}

@@ -1,0 +1,102 @@
+/* Estilos específicos para o dashboard */
+.dashboard-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  animation: fadeIn 0.5s ease-in-out;
+  margin: 0 auto; /* Centraliza o container */
+}
+
+.dashboard-container h1 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+
+.user-info {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.user-info p {
+  margin: 0.5rem 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center; /* Centraliza ícones verticalmente */
+}
+
+.user-info strong {
+  color: #fff;
+  margin-left: 8px; /* Espaçamento entre ícone e texto */
+}
+
+.user-info span {
+  color: #ddd;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center; /* Centraliza ícones verticalmente */
+  justify-content: flex-start; /* Alinha ícones à esquerda */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center; /* Centraliza ícones verticalmente */
+}
+
+.icon {
+  margin-right: 8px; /* Espaçamento entre ícone e texto */
+  font-size: 1.2rem; /* Tamanho do ícone ajustado */
+}
+
+.logout-btn {
+  background: #ff6b6b;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px 0;
+  display: flex;
+  align-items: center; /* Centraliza ícone verticalmente */
+  justify-content: center; /* Centraliza ícone horizontalmente */
+}
+
+.logout-btn:hover {
+  background: #e64a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}

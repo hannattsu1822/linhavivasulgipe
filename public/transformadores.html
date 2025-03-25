@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transformadores</title>
+  <link rel="stylesheet" href="static/css/styles.css">
+  <link rel="stylesheet" href="static/css/transformadores.css">
+  <link rel="stylesheet" href="static/css/toast.css"> <!-- Adicionar o arquivo toast.css -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="transformadores-container">
+    <h1><i class="fas fa-bolt icon"></i>Transformadores</h1>
+
+    <!-- Botões de ação -->
+    <div class="actions">
+      <button onclick="novoFormulario()">
+        <i class="fas fa-plus-circle icon"></i>Novo Formulário
+      </button>
+      <button onclick="navigateTo('/filtrar_transformadores')">
+        <i class="fas fa-filter icon"></i>Filtrar Formulário
+      </button>
+      <button onclick="navigateTo('/upload_transformadores')">
+        <i class="fas fa-file-export icon"></i>Exportar Dados
+      </button>
+    </div>
+
+    <!-- Botão de voltar -->
+    <button onclick="navigateTo('/dashboard')" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar ao Dashboard
+    </button>
+  </div>
+
+  <!-- Modal de Acesso Negado -->
+  <div id="access-denied-modal" class="access-denied-modal">
+    <div class="access-denied-content">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>Acesso negado!</span>
+    </div>
+  </div>
+
+  <script>
+    // Função para abrir o formulário de novo transformador
+    function novoFormulario() {
+      const numeroSerie = prompt("Digite o número de série do transformador:");
+      if (numeroSerie) {
+        window.location.href = `/formulario_transformadores?numero_serie=${numeroSerie}`;
+      } else {
+        alert("Número de série é obrigatório!");
+      }
+    }
+
+    // Função para exibir o modal de acesso negado
+    function showAccessDeniedModal() {
+      const modal = document.getElementById('access-denied-modal');
+      modal.style.display = 'flex'; // Mostra o modal
+
+      // Aplica o blur no fundo
+      document.body.classList.add('blur-background');
+
+      // Esconde o modal após 2 segundos
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.classList.remove('blur-background');
+      }, 2000); // Tempo de exibição: 2 segundos
+    }
+
+    // Função para navegar e capturar erros de acesso
+    async function navigateTo(url) {
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Para enviar cookies de sessão
+        });
+
+        if (response.ok) {
+          // Se a resposta for OK, redireciona para a página
+          window.location.href = url;
+        } else if (response.status === 403) {
+          // Se o acesso for negado, exibe o modal e NÃO redireciona
+          showAccessDeniedModal();
+        } else {
+          // Outros erros
+          showAccessDeniedModal();
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+        showAccessDeniedModal();
+      }
+    }
+  </script>
+</body>
+</html>

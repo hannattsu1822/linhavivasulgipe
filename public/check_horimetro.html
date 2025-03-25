@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Horímetro</title>
+  <link rel="stylesheet" href="/static/css/frota.css">
+  <link rel="stylesheet" href="/static/css/check_horimetro.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="frota-container">
+    <h1><i class="fas fa-clock icon"></i>Check Horímetro</h1>
+
+    <!-- Campo de seleção de placa -->
+    <div class="form-group">
+      <label for="placa">Selecione a Placa do Veículo:</label>
+      <select id="placa" name="placa">
+        <option value="">Selecione uma placa</option>
+      </select>
+    </div>
+
+    <!-- Conteúdo da página de Check Horímetro -->
+    <div id="horimetroContent">
+      <p>Selecione uma placa para verificar o horímetro.</p>
+    </div>
+
+    <!-- Botão de voltar -->
+    <button onclick="window.location.href = '/frota'" class="back-btn">
+      <i class="fas fa-arrow-left icon"></i>Voltar para Frota
+    </button>
+  </div>
+
+  <script>
+    // Função para carregar as placas dos veículos
+    async function carregarPlacas() {
+      try {
+        console.log('Carregando placas...'); // Log de depuração
+        const response = await fetch('/api/placas');
+        const data = await response.json();
+
+        console.log('Placas carregadas:', data); // Log de depuração
+
+        const placaSelect = document.getElementById('placa');
+
+        // Limpa o menu suspenso
+        placaSelect.innerHTML = '<option value="">Selecione uma placa</option>';
+
+        // Adiciona as opções
+        data.forEach((veiculo) => {
+          const option = document.createElement('option');
+          option.value = veiculo.placa;
+          option.textContent = veiculo.placa;
+          placaSelect.appendChild(option);
+        });
+
+        console.log('Placas adicionadas ao dropdown.'); // Log de depuração
+      } catch (error) {
+        console.error('Erro ao carregar placas:', error);
+      }
+    }
+
+    // Função para carregar os dados do horímetro com base na placa
+    async function carregarHorimetro(placa) {
+      try {
+        console.log('Carregando horímetro para a placa:', placa); // Log de depuração
+
+        const response = await fetch(`/api/ultimo_horimetro?placa=${placa}`);
+        
+        // Verifica se a resposta é OK (status 200-299)
+        if (!response.ok) {
+          throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+        }
+
+        // Verifica o tipo de conteúdo da resposta
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text(); // Lê a resposta como texto
+          console.error('Resposta não é JSON:', text);
+          throw new Error('Resposta não é JSON');
+        }
+
+        // Converte a resposta para JSON
+        const data = await response.json();
+
+        console.log('Resposta da API:', data); // Log de depuração
+
+        const horimetroContent = document.getElementById('horimetroContent');
+
+        // Se não houver horímetro registrado
+        if (!data.horimetro) {
+          console.log('Nenhum horímetro encontrado para a placa:', placa); // Log de depuração
+          horimetroContent.innerHTML = `
+            <p>Nenhum dado de horímetro encontrado para a placa ${placa}.</p>
+          `;
+          return;
+        }
+
+        // Horímetro atual
+        const horimetroAtual = data.horimetro;
+
+        console.log('Horímetro atual:', horimetroAtual); // Log de depuração
+
+        // Horas faltantes para a próxima troca de óleo (300 horas é o intervalo)
+        const horasFaltantes = 300 - horimetroAtual;
+
+        console.log('Horas faltantes para a próxima troca:', horasFaltantes); // Log de depuração
+
+        // Determina o status
+        let status, classeStatus;
+        if (horasFaltantes > 125) {
+          status = 'Verde - Não é necessário trocar o óleo ainda.';
+          classeStatus = 'status-verde';
+        } else if (horasFaltantes > 40 && horasFaltantes <= 125) {
+          status = 'Amarelo - Atenção, próximo da troca.';
+          classeStatus = 'status-amarelo';
+        } else if (horasFaltantes <= 40) {
+          status = 'Vermelho - Troca de óleo necessária!';
+          classeStatus = 'status-vermelho';
+        } else {
+          status = 'Informação ausente.';
+          classeStatus = 'status-vermelho';
+        }
+
+        console.log('Status da troca de óleo:', status); // Log de depuração
+
+        // Exibe o status
+        horimetroContent.innerHTML = `
+          <p><strong>Placa:</strong> ${placa}</p>
+          <p><strong>Horímetro Atual:</strong> ${horimetroAtual} horas</p>
+          <p><strong>Faltam:</strong> ${horasFaltantes} horas para a próxima troca de óleo.</p>
+          <div class="status ${classeStatus}">
+            <strong>Status:</strong> ${status}
+          </div>
+        `;
+      } catch (error) {
+        console.error('Erro ao carregar horímetro:', error);
+        const horimetroContent = document.getElementById('horimetroContent');
+        horimetroContent.innerHTML = `
+          <p>Erro ao carregar informações do horímetro: ${error.message}</p>
+        `;
+      }
+    }
+
+    // Evento de mudança no campo de seleção de placa
+    document.getElementById('placa').addEventListener('change', (event) => {
+      const placa = event.target.value;
+      console.log('Placa selecionada:', placa); // Log de depuração
+      if (placa) {
+        carregarHorimetro(placa);
+      } else {
+        const horimetroContent = document.getElementById('horimetroContent');
+        horimetroContent.innerHTML = `
+          <p>Selecione uma placa para verificar o horímetro.</p>
+        `;
+      }
+    });
+
+    // Carrega as placas ao carregar a página
+    window.onload = carregarPlacas;
+  </script>
+</body>
+</html>
