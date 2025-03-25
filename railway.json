@@ -1,18 +1,38 @@
 {
-    "$schema": "https://railway.com/railway.schema.json",
-    "build": {
-      "builder": "NIXPACKS"
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "runtime": "nodejs",
+    "numReplicas": 1,
+    "startCommand": "node server.js",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 30,
+    "sleepApplication": false,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "variables": {
+    "MYSQL_URL": {
+      "description": "MySQL connection URL",
+      "value": "mysql://root:aUhxdnXKYXFdAqepSKQpYcMgUntBvfTa@shortline.proxy.rlwy.net:31056/railway"
     },
-    "deploy": {
-      "runtime": "V2",
-      "numReplicas": 1,
-      "sleepApplication": false,
-      "multiRegionConfig": {
-        "us-west2": {
-          "numReplicas": 1
-        }
-      },
-      "restartPolicyType": "ON_FAILURE",
-      "restartPolicyMaxRetries": 10
+    "MYSQL_SSL": {
+      "description": "Enable SSL for MySQL",
+      "value": "true"
+    },
+    "SESSION_SECRET": {
+      "description": "Secret for session encryption",
+      "generator": "secret"
+    },
+    "PORT": {
+      "description": "Port for the application to listen on",
+      "value": "3000"
+    },
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
     }
   }
+}
