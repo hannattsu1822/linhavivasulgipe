@@ -6,16 +6,17 @@ const session = require('express-session');
 const mysql = require('mysql2');
 const { chromium } = require('playwright');
 const cors = require('cors');
-require('dotenv').config(); // Carrega as variáveis de ambiente
-
 const app = express();
+const port = 3000;
+require('dotenv').config();
 
-// Configuração dinâmica da porta para Railway
-const port = process.env.PORT || 3000;
-
-// Middlewares
+// Middleware para processar JSON
 app.use(express.json());
+
+// Middleware CORS
 app.use(cors());
+
+// Servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Configuração do multer para upload de arquivos
@@ -23,59 +24,40 @@ const upload = multer({ dest: 'uploads/' });
 
 // Configuração de sessões
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'sua_chave_secreta_segura', // Melhor usar variável de ambiente
+  secret: 'sua_chave_secreta',
   resave: false,
   saveUninitialized: true,
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production', // Habilita secure cookie em produção
-    maxAge: 24 * 60 * 60 * 1000 // 24 horas
-  }
+  cookie: { secure: false }
 }));
 
-// Configuração robusta da conexão com MySQL
-let pool;
-try {
-  if (!process.env.MYSQL_URL) {
-    throw new Error('Variável MYSQL_URL não encontrada no .env');
-  }
+// Configuração do pool de conexões MySQL para Railway
+const pool = mysql.createPool(process.env.MYSQL_URL || {
+  host: 'shortline.proxy.rlwy.net',
+  user: 'root',
+  password: 'aUhxdnXKYXFdAqepSKQpYcMgUntBvfTa',
+  database: 'railway',
+  port: 31056,
+  ssl: {
+    rejectUnauthorized: false
+  },
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
-  // Extrai os componentes da URL de conexão
-  const dbUrl = process.env.MYSQL_URL;
-  const [_, user, password, host, portDb, database] = dbUrl.match(/mysql:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/) || [];
-  
-  pool = mysql.createPool({
-    host: host || 'shortline.proxy.rlwy.net',
-    user: user || 'root',
-    password: password || 'aUhxdnXKYXFdAqepSKQpYcMgUntBvfTa',
-    database: database || 'railway',
-    port: portDb || 31056,
-    ssl: process.env.MYSQL_SSL === 'true' ? { 
-      rejectUnauthorized: false 
-    } : null,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    connectTimeout: 10000 // 10 segundos de timeout
-  });
-
-  // Testa a conexão imediatamente
-  pool.getConnection((err, connection) => {
-    if (err) {
-      console.error('❌ Erro ao conectar ao banco de dados:', err);
-      process.exit(1);
-    }
-    console.log('✅ Conexão com o banco de dados estabelecida com sucesso!');
-    connection.release();
-  });
-
-} catch (error) {
-  console.error('❌ Erro na configuração do banco de dados:', error.message);
-  process.exit(1);
-}
-
+// Promisify para usar async/await com MySQL
 const promisePool = pool.promise();
 
-// ... (continue com o restante do seu código atual)
+// Middleware para verificar conexão com o banco de dados
+app.use(async (req, res, next) => {
+  try {
+    await promisePool.query('SELECT 1');
+    next();
+  } catch (err) {
+    console.error('Erro na conexão com o banco de dados:', err);
+    res.status(500).json({ message: 'Erro na conexão com o banco de dados' });
+  }
+});
 
 // Função para converter Excel Serial Date para data legível
 function excelSerialDateToJSDate(serial) {
@@ -154,6 +136,16 @@ async function registrarAuditoria(matricula, acao, detalhes = null) {
     console.error('Erro ao registrar auditoria:', err);
   }
 }
+
+// Rota de saúde
+app.get('/health', async (req, res) => {
+  try {
+    await promisePool.query('SELECT 1');
+    res.status(200).json({ status: 'healthy', database: 'connected' });
+  } catch (err) {
+    res.status(500).json({ status: 'unhealthy', database: 'disconnected' });
+  }
+});
 
 // Rota de login
 app.post('/login', async (req, res) => {
