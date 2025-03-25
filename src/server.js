@@ -7,39 +7,33 @@ const mysql = require('mysql2');
 const { chromium } = require('playwright');
 const cors = require('cors');
 const app = express();
-const port = 3000;
 require('dotenv').config();
 
-// Middleware para processar JSON
+// Configurações básicas
+const port = process.env.PORT || 3000;
+
+// Middlewares
 app.use(express.json());
-
-// Middleware CORS
 app.use(cors());
-
-// Servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Configuração do multer para upload de arquivos
 const upload = multer({ dest: 'uploads/' });
 
-// Configuração de sessões
+// Configuração de sessão
 app.use(session({
-  secret: 'sua_chave_secreta',
+  secret: process.env.SESSION_SECRET || 'sua_chave_secreta_fallback',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
 // Configuração do pool de conexões MySQL para Railway
-const pool = mysql.createPool(process.env.MYSQL_URL || {
-  host: 'shortline.proxy.rlwy.net',
-  user: 'root',
-  password: 'aUhxdnXKYXFdAqepSKQpYcMgUntBvfTa',
-  database: 'railway',
-  port: 31056,
-  ssl: {
-    rejectUnauthorized: false
-  },
+const pool = mysql.createPool({
+  connectionString: process.env.MYSQL_URL || 'mysql://root:aUhxdnXKYXFdAqepSKQpYcMgUntBvfTa@shortline.proxy.rlwy.net:31056/railway',
+  ssl: process.env.MYSQL_SSL === 'true' ? { 
+    rejectUnauthorized: false 
+  } : null,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -83,7 +77,7 @@ function verificarPermissaoPorCargo(req, res, next) {
   console.log(`Cargo do usuário: ${cargo}`);
   console.log(`Rota solicitada: ${req.path}`);
 
-  const rotasPublicas = ['/login', '/dashboard'];
+  const rotasPublicas = ['/login', '/dashboard', '/health', '/relatorio_publico', '/relatorio_publico_veiculos'];
   if (rotasPublicas.includes(req.path)) {
     return next();
   }
@@ -141,9 +135,17 @@ async function registrarAuditoria(matricula, acao, detalhes = null) {
 app.get('/health', async (req, res) => {
   try {
     await promisePool.query('SELECT 1');
-    res.status(200).json({ status: 'healthy', database: 'connected' });
+    res.status(200).json({ 
+      status: 'healthy',
+      database: 'connected',
+      environment: process.env.NODE_ENV || 'development'
+    });
   } catch (err) {
-    res.status(500).json({ status: 'unhealthy', database: 'disconnected' });
+    res.status(500).json({ 
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: err.message
+    });
   }
 });
 
@@ -303,7 +305,6 @@ app.post('/api/filtrar_inspecoes', autenticar, async (req, res) => {
   try {
     let query = 'SELECT * FROM inspecoes WHERE 1=1';
     const values = [];
-    let index = 1;
 
     if (placa) {
       query += ` AND placa = ?`;
@@ -979,5 +980,7 @@ app.get('/api/inspecoes_publico/:id', async (req, res) => {
 
 // Iniciar o servidor
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`Servidor rodando na porta ${port}`);
+  console.log(`Modo: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Banco de dados: ${process.env.MYSQL_URL ? 'Configurado' : 'Não configurado'}`);
 });
